@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digit Classifier</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1b2a;
+      color: #e0e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #1b263b;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    h1 {
+      color: #e0e8f0;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .custom-file-upload {
+      display: block;
+      border: 2px dashed #3e5c76;
+      padding: 20px;
+      border-radius: 12px;
+      background-color: #243b53;
+      cursor: pointer;
+      margin-bottom: 15px;
+      color: #a8b8c9;
+      transition: background 0.2s ease;
+    }
+
+    .custom-file-upload:hover {
+      background-color: #2b4d66;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+ img#preview {
+  max-width: 100%;
+  margin-top: 15px;
+  border-radius: 10px;
+  display: none;
+  animation: fadeIn 0.5s ease-in-out;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #1c7ed6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1864ab;
+    }
+
+#result {
+  display: none; /* يختفي في البداية */
+  margin-top: 25px;
+  font-size: 24px; /* أكبر حجم خط */
+  font-weight: bold;
+  color: #4dabf7;
+  background-color: #132e4f;
+  padding: 16px 24px; /* بادينج أكبر */
+  border-radius: 12px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔢 MNIST Digit Classifier</h1>
+
+    <label class="custom-file-upload">
+      Upload a digit image
+      <input type="file" id="file-input" accept="image/*" required />
+    </label>
+
+    <img id="preview"  />
+    <button id="classify-btn">Classify Digit</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const preview = document.getElementById('preview');
+    const result = document.getElementById('result');
+    const classifyBtn = document.getElementById('classify-btn');
+
+    fileInput.addEventListener('change', function () {
+      const file = fileInput.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        result.textContent = '';
+        result.style.display = 'none';
+      }
+    });
+
+    classifyBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        result.textContent = 'Please upload an image first.';
+        result.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/predict/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+        result.textContent = ` Predicted digit: ${data.prediction}`;
+        result.style.display = 'block';
+      } catch (error) {
+        result.textContent = '❌ An error occurred while predicting.';
+        result.style.display = 'block';
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
