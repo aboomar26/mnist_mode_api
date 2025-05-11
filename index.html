@@ -95,13 +95,13 @@
     }
 
 #result {
-  display: none; /* يختفي في البداية */
+  display: none;
   margin-top: 25px;
-  font-size: 24px; /* أكبر حجم خط */
+  font-size: 24px;
   font-weight: bold;
   color: #4dabf7;
   background-color: #132e4f;
-  padding: 16px 24px; /* بادينج أكبر */
+  padding: 16px 24px;
   border-radius: 12px;
   width: fit-content;
   margin-left: auto;
@@ -169,7 +169,7 @@
         result.textContent = ` Predicted digit: ${data.prediction}`;
         result.style.display = 'block';
       } catch (error) {
-        result.textContent = '❌ An error occurred while predicting.';
+        result.textContent = 'An error occurred while predicting.';
         result.style.display = 'block';
         console.error(error);
       }
